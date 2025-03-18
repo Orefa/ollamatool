@@ -38,9 +38,15 @@ func getFilesAndTotalSize(dir string) ([]string, int64, error) {
 
 func getFiles(modelName string, ollamaDir string) (filePaths []string, totalSize int64) {
 
-	arr := strings.Split(modelName, ":")
+	arr := strings.Split(modelName, "/")
+	library := arr[0]
+	if library == "" {
+		library = "library"
+	}
 
-	floc := filepath.Join(ollamaDir, manifests, arr[0], arr[1])
+	arr2 := strings.Split(arr[1], ":")
+
+	floc := filepath.Join(ollamaDir, manifests, library, arr2[0], arr2[1])
 	// fmt.Println(floc)
 	filePaths = append(filePaths, floc)
 	f, _ := os.Open(floc)

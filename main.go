@@ -11,7 +11,7 @@ import (
 
 // var ollamaDir = `E:\.ollama`
 
-var manifests = `models\manifests\registry.ollama.ai\library\`
+var manifests = `models\manifests\registry.ollama.ai\`
 var ollamaBlob = `models\blobs\`
 
 func main() {
@@ -54,6 +54,7 @@ func main() {
 			modelPath, _ := cmd.Flags().GetString("OLLAMA_MODELS")
 			modelName, _ := cmd.Flags().GetString("modelName")
 			outputFile := strings.ReplaceAll(modelName, ":", "-") + ".zip"
+			outputFile = strings.ReplaceAll(outputFile, "/", "_")
 			filePaths, totalSize := getFiles(modelName, modelPath)
 			// filePaths, totalSize, _ := getFilesAndTotalSize(`D:\dist\lib`)
 			zipFiles(filePaths, totalSize, modelPath, outputFile)
