@@ -37,16 +37,24 @@ func getFilesAndTotalSize(dir string) ([]string, int64, error) {
 }
 
 func getFiles(modelName string, ollamaDir string) (filePaths []string, totalSize int64) {
+	var library string
+	var name string
+	var ver string
+	if strings.Contains(modelName, "/") {
+		arr := strings.Split(modelName, "/")
+		library = arr[0]
+		arr2 := strings.Split(arr[1], ":")
+		name = arr2[0]
+		ver = arr2[1]
 
-	arr := strings.Split(modelName, "/")
-	library := arr[0]
-	if library == "" {
+	} else {
 		library = "library"
+		arr2 := strings.Split(modelName, ":")
+		name = arr2[0]
+		ver = arr2[1]
 	}
 
-	arr2 := strings.Split(arr[1], ":")
-
-	floc := filepath.Join(ollamaDir, manifests, library, arr2[0], arr2[1])
+	floc := filepath.Join(ollamaDir, manifests, library, name, ver)
 	// fmt.Println(floc)
 	filePaths = append(filePaths, floc)
 	f, _ := os.Open(floc)
@@ -82,7 +90,7 @@ func getFiles(modelName string, ollamaDir string) (filePaths []string, totalSize
 }
 
 // 去重文件路径
-func removeDuplicatePaths(files []string) []string {
+func removeDuplicatePaths(files []string) ([]string, int64) {
 	// 使用map来去重
 	uniqueFiles := make(map[string]struct{})
 	for _, file := range files {
@@ -91,8 +99,11 @@ func removeDuplicatePaths(files []string) []string {
 
 	// 转换map为切片
 	var result []string
+	var totalSize int64
 	for file := range uniqueFiles {
+		fif, _ := os.Stat(file)
+		totalSize += fif.Size()
 		result = append(result, file)
 	}
-	return result
+	return result, totalSize
 }

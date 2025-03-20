@@ -53,11 +53,28 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			modelPath, _ := cmd.Flags().GetString("OLLAMA_MODELS")
 			modelName, _ := cmd.Flags().GetString("modelName")
-			outputFile := strings.ReplaceAll(modelName, ":", "-") + ".zip"
-			outputFile = strings.ReplaceAll(outputFile, "/", "_")
-			filePaths, totalSize := getFiles(modelName, modelPath)
-			// filePaths, totalSize, _ := getFilesAndTotalSize(`D:\dist\lib`)
-			zipFiles(filePaths, totalSize, modelPath, outputFile)
+			if strings.Contains(modelName, ",") {
+				arr := strings.Split(modelName, ",")
+				var files []string
+				for _, v := range arr {
+					filePaths, _ := getFiles(v, modelPath)
+					files = append(files, filePaths...)
+				}
+				disfiles, totalSize := removeDuplicatePaths(files)
+				outputFile := strings.ReplaceAll(modelName, ":", "-") + ".zip"
+				outputFile = strings.ReplaceAll(outputFile, "/", "_")
+				outputFile = strings.ReplaceAll(outputFile, ",", "&")
+
+				zipFiles(disfiles, totalSize, modelPath, outputFile)
+			} else {
+				filePaths, totalSize := getFiles(modelName, modelPath)
+				outputFile := strings.ReplaceAll(modelName, ":", "-") + ".zip"
+				outputFile = strings.ReplaceAll(outputFile, "/", "_")
+
+				// filePaths, totalSize, _ := getFilesAndTotalSize(`D:\dist\lib`)
+				zipFiles(filePaths, totalSize, modelPath, outputFile)
+			}
+
 			// compress(filePaths, totalSize, modelPath, outputFile)
 		},
 	}
