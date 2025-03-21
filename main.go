@@ -105,7 +105,7 @@ func main() {
 			unzipFile(importFile, modelPath)
 		},
 	}
-	importCommand.PersistentFlags().String("importFile", "", `impor model file`)
+	importCommand.PersistentFlags().String("importFile", "", `import model file`)
 
 	rootCmd.AddCommand(importCommand)
 	// 执行命令
