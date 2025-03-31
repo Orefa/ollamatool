@@ -61,18 +61,18 @@ func main() {
 					files = append(files, filePaths...)
 				}
 				disfiles, totalSize := removeDuplicatePaths(files)
-				outputFile := strings.ReplaceAll(modelName, ":", "-") + ".zip"
+				outputFile := strings.ReplaceAll(modelName, ":", "-") + ".tar.zst"
 				outputFile = strings.ReplaceAll(outputFile, "/", "_")
 				outputFile = strings.ReplaceAll(outputFile, ",", "&")
 
-				zipFiles(disfiles, totalSize, modelPath, outputFile)
+				tarZstFiles(disfiles, totalSize, modelPath, outputFile)
 			} else {
 				filePaths, totalSize := getFiles(modelName, modelPath)
-				outputFile := strings.ReplaceAll(modelName, ":", "-") + ".zip"
+				outputFile := strings.ReplaceAll(modelName, ":", "-") + ".tar.zst"
 				outputFile = strings.ReplaceAll(outputFile, "/", "_")
 
 				// filePaths, totalSize, _ := getFilesAndTotalSize(`D:\dist\lib`)
-				zipFiles(filePaths, totalSize, modelPath, outputFile)
+				tarZstFiles(filePaths, totalSize, modelPath, outputFile)
 			}
 
 			// compress(filePaths, totalSize, modelPath, outputFile)
@@ -102,7 +102,7 @@ func main() {
 			importFile, _ := cmd.Flags().GetString("importFile")
 			modelPath, _ := cmd.Flags().GetString("OLLAMA_MODELS")
 			// uncompress(importFile, modelPath)
-			unzipFile(importFile, modelPath)
+			unZstFile(importFile, modelPath)
 		},
 	}
 	importCommand.PersistentFlags().String("importFile", "", `import model file`)
