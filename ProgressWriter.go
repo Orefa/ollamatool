@@ -12,6 +12,7 @@ type ProgressWriter struct {
 	total          int64
 	progress       int64
 	fileName       string
+	uncompress     bool
 }
 
 func (p *ProgressWriter) Write(b []byte) (n int, err error) {
@@ -31,6 +32,10 @@ func (p *ProgressWriter) showProgress() {
 		return
 	}
 	progressPercent := float64(p.progress+p.compressedSize) / float64(p.total) * 100
-	fmt.Printf("\r压缩进度: %.2f%%", progressPercent)
+	if p.uncompress {
+		fmt.Printf("\r解压进度: %.2f%%", progressPercent)
+	} else {
+		fmt.Printf("\r压缩进度: %.2f%%", progressPercent)
+	}
 	// fmt.Printf("\rCompressing file '%s': %.2f%%", p.fileName, progressPercent)
 }

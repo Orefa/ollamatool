@@ -175,6 +175,7 @@ func unZstFile(tarzstfile string, destDir string) error {
 				compressedSize: processedSize,
 				total:          totalSize,
 				fileName:       header.Name, // 将相对路径作为文件名
+				uncompress:     true,
 			}
 			// 将 tar 中的内容复制到文件
 			_, err = io.Copy(progressWriter, tarReader)
