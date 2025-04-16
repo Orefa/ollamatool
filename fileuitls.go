@@ -37,15 +37,24 @@ func getFilesAndTotalSize(dir string) ([]string, int64, error) {
 }
 
 func getFiles(modelName string, ollamaDir string) (filePaths []string, totalSize int64) {
-	var library string
+	var domain string = "registry.ollama.ai"
+	var library string = "library"
 	var name string
 	var ver string
 	if strings.Contains(modelName, "/") {
 		arr := strings.Split(modelName, "/")
-		library = arr[0]
-		arr2 := strings.Split(arr[1], ":")
-		name = arr2[0]
-		ver = arr2[1]
+		if len(arr) == 3 {
+			domain = arr[0]
+			library = arr[1]
+			arr2 := strings.Split(arr[2], ":")
+			name = arr2[0]
+			ver = arr2[1]
+		} else {
+			library = arr[0]
+			arr2 := strings.Split(arr[1], ":")
+			name = arr2[0]
+			ver = arr2[1]
+		}
 
 	} else {
 		library = "library"
@@ -54,7 +63,7 @@ func getFiles(modelName string, ollamaDir string) (filePaths []string, totalSize
 		ver = arr2[1]
 	}
 
-	floc := filepath.Join(ollamaDir, manifests, library, name, ver)
+	floc := filepath.Join(ollamaDir, manifests, domain, library, name, ver)
 	// fmt.Println(floc)
 	filePaths = append(filePaths, floc)
 	f, _ := os.Open(floc)

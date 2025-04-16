@@ -11,7 +11,7 @@ import (
 
 // var ollamaDir = `E:\.ollama`
 
-var manifests = `models\manifests\registry.ollama.ai\`
+var manifests = `models\manifests\`
 var ollamaBlob = `models\blobs\`
 
 func main() {
