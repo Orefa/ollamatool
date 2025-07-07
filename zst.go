@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/klauspost/compress/zstd"
@@ -152,6 +153,7 @@ func unZstFile(tarzstfile string, destDir string) error {
 			log.Fatal(err)
 		}
 		path := filepath.Join(destDir, header.Name)
+		path = strings.ReplaceAll(path, `\`, "/")
 		// 创建文件或目录
 		if header.Typeflag == tar.TypeDir {
 			// 创建目录

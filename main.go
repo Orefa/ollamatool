@@ -11,8 +11,8 @@ import (
 
 // var ollamaDir = `E:\.ollama`
 
-var manifests = `models\manifests\`
-var ollamaBlob = `models\blobs\`
+var manifests = `manifests\`
+var ollamaBlob = `blobs\`
 
 func main() {
 	// 获取当前执行文件的路径
@@ -33,16 +33,11 @@ func main() {
 	// 隐藏命令，不代表不存在
 	rootCmd.CompletionOptions.HiddenDefaultCmd = true
 
-	rootCmd.PersistentFlags().String("OLLAMA_MODELS", "", `Ollama Model存储路径`)
+	// rootCmd.PersistentFlags().String("OLLAMA_MODELS", "", `Ollama Model存储路径`)
 
 	var exportCmd = &cobra.Command{
 		Use: "export",
 		Args: func(cmd *cobra.Command, args []string) error {
-			modelPath, _ := cmd.Flags().GetString("OLLAMA_MODELS")
-			if modelPath == "" {
-				// cmd.Help()
-				return fmt.Errorf("you must provide Ollama Model存储路径")
-			}
 			modelName, _ := cmd.Flags().GetString("modelName")
 			if modelName == "" || !strings.Contains(modelName, ":") {
 				// cmd.Help()
@@ -51,7 +46,7 @@ func main() {
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			modelPath, _ := cmd.Flags().GetString("OLLAMA_MODELS")
+			modelPath := Models()
 			modelName, _ := cmd.Flags().GetString("modelName")
 			if strings.Contains(modelName, ",") {
 				arr := strings.Split(modelName, ",")
@@ -85,11 +80,6 @@ func main() {
 	var importCommand = &cobra.Command{
 		Use: "import",
 		Args: func(cmd *cobra.Command, args []string) error {
-			modelPath, _ := cmd.Flags().GetString("OLLAMA_MODELS")
-			if modelPath == "" {
-				// cmd.Help()
-				return fmt.Errorf("you must provide Ollama Model存储路径")
-			}
 			importFile, _ := cmd.Flags().GetString("importFile")
 			if importFile == "" || !fileExists(importFile) {
 				// cmd.Help()
@@ -100,7 +90,7 @@ func main() {
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			importFile, _ := cmd.Flags().GetString("importFile")
-			modelPath, _ := cmd.Flags().GetString("OLLAMA_MODELS")
+			modelPath := Models()
 			// uncompress(importFile, modelPath)
 			unZstFile(importFile, modelPath)
 		},
@@ -127,4 +117,23 @@ func fileExists(filePath string) bool {
 		return false // 其他错误
 	}
 	return true // 文件存在
+}
+
+// Var returns an environment variable stripped of leading and trailing quotes or spaces
+func Var(key string) string {
+	return strings.Trim(strings.TrimSpace(os.Getenv(key)), "\"'")
+}
+
+// Default is $HOME/.ollama/models
+func Models() string {
+	if s := Var("OLLAMA_MODELS"); s != "" {
+		return s
+	}
+
+	home, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+
+	return filepath.Join(home, ".ollama", "models")
 }
