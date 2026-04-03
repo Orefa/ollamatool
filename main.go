@@ -11,8 +11,8 @@ import (
 
 // var ollamaDir = `E:\.ollama`
 
-var manifests = `manifests\`
-var ollamaBlob = `blobs\`
+var manifests = `manifests`
+var ollamaBlob = `blobs`
 
 func main() {
 	// 获取当前执行文件的路径
